@@ -83,7 +83,8 @@ class SportsWalking(Training):
         return ((self.K_WALK * self.weight + ((self.get_mean_speed()
                 * self.KM_H_M_S) ** 2 / (self.height / self.MM_TO_M))
                 * self.K_WALK2 * self.weight)
-                * (self.duration * self.MIN_IN_HOUR))
+                * (self.duration * self.MIN_IN_HOUR)
+                )
 
 
 @dataclass
