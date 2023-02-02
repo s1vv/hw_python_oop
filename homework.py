@@ -81,8 +81,8 @@ class SportsWalking(Training):
     def get_spent_calories(self) -> float:
         """Расчитать колличество затраченных калорий при ходьбе"""
         return ((self.K_WALK * self.weight + ((self.get_mean_speed()
-                * self.KM_H_M_S) ** 2 / (self.height / self.MM_TO_M))
-                * self.K_WALK2 * self.weight)
+                 * self.KM_H_M_S) ** 2 / (self.height / self.MM_TO_M))
+                 * self.K_WALK2 * self.weight)
                 * (self.duration * self.MIN_IN_HOUR))
 
 
@@ -94,8 +94,8 @@ class Swimming(Training):
     K_SWM: ClassVar[float] = 1.1        # Коэффициент формулы
     K_SWM2: ClassVar[float] = 2         # Коэффициент формулы
 
-    length_pool: float    # Длина бассейна, метры
-    count_pool: float     # Количество дорожек
+    length_pool: float                  # Длина бассейна, метры
+    count_pool: float                   # Количество пройденных дорожек
 
     def get_mean_speed(self) -> float:
         """Расчитать среднюю скорость вплавь"""
