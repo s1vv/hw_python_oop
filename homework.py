@@ -6,10 +6,10 @@ from dataclasses import dataclass
 class InfoMessage:
     """Информационное сообщение о тренировке."""
     training_type: str  # Тип тренировки
-    duration: float  # Продолжительность, часы
-    distance: float  # Дистанция, киллометры
-    speed: float  # Скорость, км/ч
-    calories: float  # Затрачено энергии, килокалории
+    duration: float     # Продолжительность, часы
+    distance: float     # Дистанция, киллометры
+    speed: float        # Скорость, км/ч
+    calories: float     # Затрачено энергии, килокалории
 
     def get_message(self):
         """Отформатировать и вернуть готовое сообщение"""
@@ -23,13 +23,13 @@ class InfoMessage:
 @dataclass
 class Training:
     """Базовый класс тренировки."""
-    LEN_STEP: ClassVar[float] = 0.65  # Шаг, метров
-    M_IN_KM: ClassVar[float] = 1000  # Метров в км
-    MIN_IN_HOUR: ClassVar[float] = 60  # Минут в часы
+    LEN_STEP: ClassVar[float] = 0.65    # Шаг, метров
+    M_IN_KM: ClassVar[float] = 1000     # Метров в км
+    MIN_IN_HOUR: ClassVar[float] = 60   # Минут в часы
 
-    action: int  # Количество движений
-    duration: float  # Продолжительность, час
-    weight: float  # Вес
+    action: int         # Количество движений
+    duration: float     # Продолжительность, час
+    weight: float       # Вес
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
@@ -55,10 +55,10 @@ class Training:
 @dataclass
 class Running(Training):
     """Тренировка: бег."""
-    CALORIES_MEAN_SPEED_MULTIPLIER: ClassVar[float] = 18
     # Коэффициент для формулы
-    K1: ClassVar[float] = 1.79
+    CALORIES_MEAN_SPEED_MULTIPLIER: ClassVar[float] = 18
     # Коэффициент формулы
+    K1: ClassVar[float] = 1.79
 
     def get_spent_calories(self) -> float:
         """Расчитать колличество затраченных калорий при беге"""
@@ -90,14 +90,12 @@ class SportsWalking(Training):
 class Swimming(Training):
     """Тренировка: плавание."""
 
-    LEN_STEP: ClassVar[float] = 1.38  # "Шаг" в плавании
-    K_SWM: ClassVar[float] = 1.1  # Коэффициент формулы
-    K_SWM2: ClassVar[float] = 2  # Коэффициент формулы
+    LEN_STEP: ClassVar[float] = 1.38    # "Шаг" в плавании
+    K_SWM: ClassVar[float] = 1.1        # Коэффициент формулы
+    K_SWM2: ClassVar[float] = 2         # Коэффициент формулы
 
-    length_pool: float
-    # Длина бассейна в метрах
-    count_pool: float
-    # Сколько раз преодолена дорожка
+    length_pool: float    # Длина бассейна в метрах
+    count_pool: float     # Сколько раз преодолена дорожка
 
     def get_mean_speed(self) -> float:
         """Расчитать среднюю скорость вплавь"""
