@@ -94,8 +94,8 @@ class Swimming(Training):
     K_SWM: ClassVar[float] = 1.1        # Коэффициент формулы
     K_SWM2: ClassVar[float] = 2         # Коэффициент формулы
 
-    length_pool: float    # Длина бассейна в метрах
-    count_pool: float     # Сколько раз преодолена дорожка
+    length_pool: float    # Длина бассейна, метры
+    count_pool: float     # Количество дорожек
 
     def get_mean_speed(self) -> float:
         """Расчитать среднюю скорость вплавь"""
