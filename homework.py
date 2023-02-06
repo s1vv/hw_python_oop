@@ -1,5 +1,5 @@
 from typing import ClassVar
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 
 @dataclass
@@ -10,14 +10,15 @@ class InfoMessage:
     distance: float     # Дистанция, киллометры
     speed: float        # Скорость, км/ч
     calories: float     # Затрачено энергии, килокалории
+    MESSAGE: str = ('Тип тренировки: {training_type}; '
+                    'Длительность: {duration:.3f} ч.; '
+                    'Дистанция: {distance:.3f} км; '
+                    'Ср. скорость: {speed:.3f} км/ч; '
+                    'Потрачено ккал: {calories:.3f}.')
 
-    def get_message(self):
+    def get_message(self) -> str:
         """Отформатировать и вернуть готовое сообщение"""
-        return (f'Тип тренировки: {self.training_type}; '
-                f'Длительность: {self.duration:.3f} ч.; '
-                f'Дистанция: {self.distance:.3f} км; '
-                f'Ср. скорость: {self.speed:.3f} км/ч; '
-                f'Потрачено ккал: {self.calories:.3f}.')
+        return self.MESSAGE.format(**asdict(self))
 
 
 @dataclass
@@ -37,19 +38,25 @@ class Training:
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
+        if self.duration == 0:
+            raise ValueError("Длительность тренировки должна быть "
+                             "больше нуля")
         return self.get_distance() / self.duration
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        pass
+        raise NotImplementedError('Определите метод get_spent_calories '
+                                  f'в {type(self).__name__}')
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
-        return InfoMessage(self.__class__.__name__,
-                           self.duration,
-                           self.get_distance(),
-                           self.get_mean_speed(),
-                           self.get_spent_calories())
+        return InfoMessage(
+            type(self).__name__,
+            self.duration,
+            self.get_distance(),
+            self.get_mean_speed(),
+            self.get_spent_calories()
+        )
 
 
 @dataclass
@@ -62,10 +69,13 @@ class Running(Training):
 
     def get_spent_calories(self) -> float:
         """Расчитать колличество затраченных калорий при беге"""
-        return ((self.CALORIES_MEAN_SPEED_MULTIPLIER
-                * self.get_mean_speed() + self.K1)
-                * self.weight / self.M_IN_KM * self.duration
-                * self.MIN_IN_HOUR)
+        return (
+            (
+                self.CALORIES_MEAN_SPEED_MULTIPLIER
+                * self.get_mean_speed() + self.K1
+            )
+            * self.weight / self.M_IN_KM * self.duration
+            * self.MIN_IN_HOUR)
 
 
 @dataclass
@@ -80,10 +90,17 @@ class SportsWalking(Training):
 
     def get_spent_calories(self) -> float:
         """Расчитать колличество затраченных калорий при ходьбе"""
-        return ((self.K_WALK * self.weight + ((self.get_mean_speed()
-                 * self.KM_H_M_S) ** 2 / (self.height / self.MM_TO_M))
-                 * self.K_WALK2 * self.weight)
-                * (self.duration * self.MIN_IN_HOUR))
+        return (
+            (
+                self.K_WALK * self.weight +
+                (
+                 (self.get_mean_speed() * self.KM_H_M_S) ** 2
+                 / (self.height / self.MM_TO_M)
+                )
+                * self.K_WALK2 * self.weight
+            )
+            * (self.duration * self.MIN_IN_HOUR)
+        )
 
 
 @dataclass
@@ -110,10 +127,22 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    option_training = {'SWM': Swimming, 'RUN': Running, 'WLK': SportsWalking}
-    if workout_type in option_training:
-        return option_training[workout_type](*data)
-    raise KeyError(f'Неверный код тренировки: {workout_type}')
+    option_training = {
+        'SWM': Swimming,
+        'RUN': Running,
+        'WLK': SportsWalking
+    }
+    data_wrong = [x for x in data if x < 0]
+    if data_wrong:
+        raise ValueError(
+            "Ошибка! Только положительные значения "
+            f"{ {*data_wrong} }"
+        )
+    if workout_type not in option_training:
+        raise ValueError(
+            "Мы так не тренируемся! "
+            f"Можно только так: { {*option_training.keys()} }")
+    return option_training[workout_type](*data)
 
 
 def main(training: Training) -> None:
